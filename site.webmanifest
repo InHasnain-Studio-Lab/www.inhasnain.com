@@ -1,0 +1,9 @@
+{
+  "name": "Hasnain Butt Akhtar",
+  "short_name": "inhasnain",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#08070c",
+  "theme_color": "#08070c",
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
