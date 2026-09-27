@@ -92,7 +92,7 @@ let catalogue = null;
 async function startScene() {
   if (!webgl()) { document.documentElement.classList.add('no-webgl'); return; }
   try {
-    const { createScene } = await import('./scene.js');
+    const { createScene } = await import('./scene.js?v=2');
     scene = createScene($('#scene'), { reduced });
     scene.setShape(currentShape());
     if (catalogue) feedScene(catalogue);

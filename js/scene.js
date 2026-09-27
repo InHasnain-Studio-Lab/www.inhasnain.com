@@ -126,7 +126,7 @@ export function createScene(canvas, { reduced = false } = {}) {
   let suites = SUITE_DEFAULT;
   let view = { w: 16, h: 9, wide: true };
   const shapes = {};
-  let current = 'sphere';
+  let current = 'emblem';
 
   function layout() {
     const w = canvas.clientWidth || window.innerWidth;
@@ -184,6 +184,59 @@ export function createScene(canvas, { reduced = false } = {}) {
     }
     const scale = view.wide ? 1 : 0.78;
     return { p: place(p, view.wide ? view.w * 0.2 : 0, scale), c, s, spin: 0.08, wave: 0 };
+  }
+
+  /* The studio mark in light: a double hexagon frame around the rounded H,
+     the same emblem that opens the studio's homepage. */
+  function emblem() {
+    const k = view.wide ? 1 : 0.5;
+    const R = 2.3 * k, Ri = 1.94 * k;
+    const hx = 0.62 * k, hy = 0.72 * k, thick = 0.21 * k;
+    const white = new Color('#f4f2ee');
+    const corner = (rr, j) => {
+      const a = Math.PI / 2 + (j * Math.PI) / 3;
+      return [Math.cos(a) * rr, Math.sin(a) * rr];
+    };
+    const onHex = (r, rr, jit) => {
+      const j = Math.floor(r() * 6), t = r();
+      const [ax, ay] = corner(rr, j), [bx, by] = corner(rr, j + 1);
+      return [ax + (bx - ax) * t + (r() - 0.5) * jit, ay + (by - ay) * t + (r() - 0.5) * jit, (r() - 0.5) * jit];
+    };
+    const bars = [[-hx, -hy, -hx, hy], [hx, -hy, hx, hy], [-hx, 0, hx, 0]];
+    const onBar = (r) => {
+      const [x1, y1, x2, y2] = bars[Math.floor(r() * 3)];
+      const t = r(), a = r() * Math.PI * 2, d = Math.sqrt(r()) * thick;
+      return [x1 + (x2 - x1) * t + Math.cos(a) * d, y1 + (y2 - y1) * t + Math.sin(a) * d, (r() - 0.5) * 0.12];
+    };
+    const inHex = (r, rr) => {
+      for (;;) {
+        const x = (r() - 0.5) * Math.sqrt(3) * rr, y = (r() - 0.5) * 2 * rr;
+        if (Math.abs(y) <= rr - Math.abs(x) / Math.sqrt(3)) return [x, y];
+      }
+    };
+    const p = new Float32Array(COUNT * 3);
+    const c = new Float32Array(COUNT * 3);
+    const s = new Float32Array(COUNT);
+    const r = rand(3);
+    const nOuter = Math.floor(COUNT * 0.24), nInner = Math.floor(COUNT * 0.16), nH = Math.floor(COUNT * 0.38);
+    const tint = (i, col, b) => c.set([col.r * b, col.g * b, col.b * b], i * 3);
+    for (let i = 0; i < COUNT; i++) {
+      if (i < nOuter) {
+        p.set(onHex(r, R, 0.07 * k), i * 3); tint(i, PALETTE[2], 1 + r() * 0.35); s[i] = 2.6 + r() * 2;
+      } else if (i < nOuter + nInner) {
+        p.set(onHex(r, Ri, 0.035 * k), i * 3); tint(i, PALETTE[2], 0.6 + r() * 0.25); s[i] = 1.9 + r() * 1.4;
+      } else if (i < nOuter + nInner + nH) {
+        p.set(onBar(r), i * 3); tint(i, white, 0.7 + r() * 0.35); s[i] = 2 + r() * 1.7;
+      } else {
+        const [x, y] = inHex(r, Ri * 0.97);
+        p.set([x, y, (r() - 0.5) * 0.35], i * 3); tint(i, PALETTE[2], 0.1 + r() * 0.14); s[i] = 1.4 + r() * 1.4;
+      }
+    }
+    const offsetX = view.wide ? view.w * 0.21 : 0;
+    /* on a phone it sits under the buttons, clear of the headline */
+    const offsetY = view.wide ? 0 : -view.h * 0.35;
+    for (let i = 0; i < COUNT; i++) { p[i * 3] += offsetX; p[i * 3 + 1] += offsetY; }
+    return { p, c, s, spin: 0, wave: 0 };
   }
 
   function mark() {
@@ -269,7 +322,7 @@ export function createScene(canvas, { reduced = false } = {}) {
     return { p, c, s, spin: 0, wave: 1 };
   }
 
-  const builders = { sphere, mark, constellation, wave };
+  const builders = { emblem, sphere, mark, constellation, wave };
 
   function build() {
     layout();
