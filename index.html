@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/site.css?v=3">
 
 <script type="application/ld+json">
 {
@@ -79,6 +79,7 @@
     <span class="mark-glyph">H</span><span class="mark-name">inhasnain</span>
   </a>
   <nav class="nav" id="nav" aria-label="Sections">
+    <a href="#studio">Studio</a>
     <a href="#story">Story</a>
     <a href="#principles">Principles</a>
     <a href="#work">Work</a>
@@ -93,6 +94,11 @@
 <main id="top">
 
   <section class="hero" data-shape="sphere">
+    <a class="ribbon" id="ribbon" href="https://hasnainstudiox.com/">
+      <span class="ribbon-tag">Hasnain Studio X</span>
+      <span class="ribbon-text" id="ribbon-text"><span data-count>73</span> apps on the Microsoft Store and Google Play</span>
+      <span class="ribbon-go" aria-hidden="true">&rarr;</span>
+    </a>
     <p class="eyebrow">Hasnain Butt Akhtar</p>
     <h1 class="display">One person.<br><span class="grad"><span data-count>73</span> apps.</span></h1>
     <p class="lede">I design, build and ship software on my own, under the name Hasnain Studio X. Apps that run on your own device, keep your data private, and are never sold by subscription.</p>
@@ -101,6 +107,36 @@
       <a class="btn btn-ghost" href="https://hasnainstudiox.com/">Visit the studio</a>
     </div>
     <p class="scroll-hint" aria-hidden="true">Scroll</p>
+  </section>
+
+  <section class="studio" id="studio" data-shape="mark" aria-labelledby="studio-title">
+    <div class="wrap">
+      <div class="banner reveal">
+        <div class="banner-hex" aria-hidden="true"></div>
+        <p class="eyebrow">The studio</p>
+        <h2 class="title" id="studio-title">Hasnain <span class="grad">Studio X</span></h2>
+        <p class="banner-lede"><span data-count>73</span> apps for Windows and Android that do their work on your own device. No account, nothing collected, and nothing sold by subscription.</p>
+        <div class="actions">
+          <a class="btn" href="https://hasnainstudiox.com/">Explore the studio</a>
+          <a class="btn btn-ghost" href="https://apps.microsoft.com/search/publisher?name=Hasnain+Studio+X">Microsoft Store</a>
+          <a class="btn btn-ghost" href="https://play.google.com/store/apps/developer?id=Hasnain+Studio+X">Google Play</a>
+        </div>
+      </div>
+      <div class="grid-3 suite-banners" id="suite-banners">
+        <a class="suite-banner reveal" href="https://hasnainstudiox.com/Windows-apps.html" style="--c:#C7A5F7" data-suite="system">
+          <small>Suite</small><strong><span class="n">25</span> apps</strong>
+          <h3>HSX System Suite</h3><p>Performance, privacy, desktop control and file movement</p>
+        </a>
+        <a class="suite-banner reveal" href="https://hasnainstudiox.com/HSXAIstudio.html" style="--c:#F2DFB8" data-suite="ai">
+          <small>Suite</small><strong><span class="n">15</span> apps</strong>
+          <h3>HSX AI Studio Suite</h3><p>Generation and understanding that runs on your own GPU</p>
+        </a>
+        <a class="suite-banner reveal" href="https://hasnainstudiox.com/Windows-apps.html" style="--c:#F3B3CF" data-suite="creative">
+          <small>Suite</small><strong><span class="n">33</span> apps</strong>
+          <h3>HSX Creative Utilities</h3><p>Audio, video, design, documents and simulated worlds</p>
+        </a>
+      </div>
+    </div>
   </section>
 
   <section class="story" id="story" data-shape="mark">
@@ -178,9 +214,29 @@
       <h2 class="title">A few of the <span data-count>73</span>.</h2>
       <p class="sub">Each point of light behind this page is one app, coloured by its suite.</p>
       <div class="suites" id="suites" aria-label="Suites"></div>
-      <div class="grid-3" id="picks">
-        <a class="pick" href="https://hasnainstudiox.com/"><h3>Loading the studio's apps</h3><p>If this stays, the full catalogue is at hasnainstudiox.com.</p></a>
+      <div class="spotlight reveal" id="spotlight" aria-roledescription="carousel" aria-label="Featured apps">
+        <div class="spot-stage" id="spot-stage">
+          <div class="spot is-on">
+            <div class="spot-copy">
+              <small>Hasnain Studio X</small>
+              <h3>Seventy-three apps, one studio</h3>
+              <p>The full catalogue is at hasnainstudiox.com.</p>
+              <div class="spot-actions"><a class="btn btn-small" href="https://hasnainstudiox.com/">Browse the apps</a></div>
+            </div>
+          </div>
+        </div>
+        <div class="spot-dots" id="spot-dots" role="group" aria-label="Choose an app"></div>
       </div>
+
+      <a class="hub-banner reveal" href="https://apps.microsoft.com/detail/9P0SCSV68797">
+        <img src="https://hasnainstudiox.com/images/apps/hsx-apps-hub-hero-sm.webp" alt="" width="400" height="225" loading="lazy" decoding="async">
+        <div class="hub-copy">
+          <small>Free on the Microsoft Store</small>
+          <h3>Every HSX app, one window.</h3>
+          <p>HSX Apps Hub finds the Hasnain Studio X apps already on your PC, opens them in a click, and tells you when one has an update.</p>
+        </div>
+        <span class="btn btn-small">Get it free</span>
+      </a>
       <a class="btn btn-ghost more" href="https://hasnainstudiox.com/">See all <span data-count>73</span> apps at Hasnain Studio X</a>
     </div>
   </section>
@@ -267,9 +323,9 @@
 
 <footer class="foot">
   <p>&copy; <span data-year>2026</span> Hasnain Butt Akhtar. Hasnain Studio X&trade; is a trade mark of Hasnain Studio X.</p>
-  <p><a href="https://hasnainstudiox.com/">hasnainstudiox.com</a></p>
+  <p class="foot-links"><a href="https://hasnainstudiox.com/">hasnainstudiox.com</a> <a href="https://apps.microsoft.com/search/publisher?name=Hasnain+Studio+X">Microsoft Store</a> <a href="https://play.google.com/store/apps/developer?id=Hasnain+Studio+X">Google Play</a> <a href="https://apps.microsoft.com/detail/9P0SCSV68797">HSX Apps Hub</a></p>
 </footer>
 
-<script type="module" src="js/main.js"></script>
+<script type="module" src="js/main.js?v=2"></script>
 </body>
 </html>

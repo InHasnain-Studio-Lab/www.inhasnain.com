@@ -125,22 +125,32 @@ function fill(data) {
     return chip;
   }));
 
-  const byId = new Map(apps.map((p) => [p.h, p]));
-  const chosen = PICKS.map((h) => byId.get(h)).filter(Boolean);
-  for (const p of apps) {
-    if (chosen.length >= 6) break;
-    if (p.f && !chosen.includes(p)) chosen.push(p);
+  for (const s of data.cs || []) {
+    const card = $(`.suite-banner[data-suite="${s.k}"]`);
+    if (!card) continue;
+    card.style.setProperty('--c', s.a);
+    $('.n', card).textContent = s.c;
+    $('h3', card).textContent = s.n;
+    if (s.t) $('p', card).textContent = s.t;
+  }
+
+  /* newest releases lead the spotlight, then the studio's chosen few */
+  const byId = new Map(apps.map((p) => [p.i, p]));
+  const byHero = new Map(apps.map((p) => [p.h, p]));
+  const live = (p) => p && p.st === 'live';
+  const chosen = [];
+  for (const n of data.ns || []) {
+    const p = byId.get(n.p);
+    if (n.k === 'release' && live(p) && !chosen.includes(p)) chosen.push(p);
+    if (chosen.length >= 3) break;
+  }
+  for (const h of PICKS) {
+    const p = byHero.get(h);
+    if (live(p) && !chosen.includes(p)) chosen.push(p);
   }
   const suiteName = new Map((data.cs || []).map((s) => [s.k, s.s]));
-  $('#picks').replaceChildren(...chosen.map((p) => {
-    const a = el('a', { class: 'pick', href: p.su || `${STUDIO}/`, style: `--c:${p.a}` });
-    a.append(
-      el('small', {}, `${suiteName.get(p.s) || p.s} · ${p.pf === 'and' ? 'Android' : 'Windows'}`),
-      el('h3', {}, p.n),
-      el('p', {}, p.t),
-    );
-    return a;
-  }));
+  spotlight(chosen.slice(0, 8), suiteName);
+  ribbon(data, byId);
 
   const pageOf = new Map(apps.map((p) => [p.i, p]));
   const releases = (data.ns || []).filter((n) => n.k === 'release').slice(0, 4);
@@ -160,6 +170,97 @@ function fill(data) {
   const undated = fixed.filter((f) => !f.querySelector('time[datetime]'));
   events.replaceChildren(...dated, ...undated);
   items.forEach(reveal);
+}
+
+/* Plays only while it can be seen: off screen, in a hidden tab, or for
+   someone who prefers reduced motion, nothing advances. */
+function autoplay(node, step, every) {
+  let timer = 0, seen = false, held = false;
+  const run = () => {
+    clearInterval(timer);
+    if (!reduced && seen && !held && !document.hidden) timer = setInterval(step, every);
+  };
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((e) => { seen = e[0].isIntersecting; run(); }, { threshold: 0.25 }).observe(node);
+  } else { seen = true; run(); }
+  node.addEventListener('pointerenter', () => { held = true; run(); });
+  node.addEventListener('pointerleave', () => { held = false; run(); });
+  node.addEventListener('focusin', () => { held = true; run(); });
+  node.addEventListener('focusout', () => { held = false; run(); });
+  document.addEventListener('visibilitychange', run);
+  return run;
+}
+
+function spotlight(list, suiteName) {
+  if (!list.length) return;
+  const stage = $('#spot-stage');
+  const dots = $('#spot-dots');
+  const slides = list.map((p, i) => {
+    const win = p.pf !== 'and';
+    const slide = el('div', { class: `spot${i ? '' : ' is-on'}`, style: `--c:${p.a}`, role: 'group',
+      'aria-roledescription': 'slide', 'aria-label': `${i + 1} of ${list.length}: ${p.n}` });
+    if (p.h) {
+      const img = el('img', { class: 'spot-art', alt: '', width: '720', height: '405', decoding: 'async',
+        src: `${STUDIO}/images/apps/${p.h}-hero.webp`,
+        srcset: `${STUDIO}/images/apps/${p.h}-hero-sm.webp 400w, ${STUDIO}/images/apps/${p.h}-hero.webp 720w`,
+        sizes: '(max-width: 820px) 100vw, 60vw' });
+      if (i) img.loading = 'lazy';
+      slide.append(img);
+    }
+    const copy = el('div', { class: 'spot-copy' });
+    copy.append(
+      el('small', {}, `${suiteName.get(p.s) || 'Studio'} · ${win ? 'Windows' : 'Android'}`),
+      el('h3', {}, p.n),
+      el('p', {}, p.t),
+    );
+    const actions = el('div', { class: 'spot-actions' });
+    if (p.u) actions.append(el('a', { class: 'btn btn-small', href: p.u }, win ? 'Try free on Microsoft Store' : 'Get it on Google Play'));
+    if (p.su) actions.append(el('a', { class: 'btn btn-small btn-ghost', href: p.su }, 'Details'));
+    copy.append(actions);
+    slide.append(copy);
+    return slide;
+  });
+  stage.replaceChildren(...slides);
+
+  let at = 0;
+  const buttons = list.map((p, i) => {
+    const b = el('button', { type: 'button', class: `spot-dot${i ? '' : ' is-on'}`, 'aria-label': `Show ${p.n}`, 'aria-pressed': String(!i) });
+    b.addEventListener('click', () => { show(i); run(); });
+    return b;
+  });
+  dots.replaceChildren(...buttons);
+  function show(i) {
+    slides[at].classList.remove('is-on');
+    buttons[at].classList.remove('is-on');
+    buttons[at].setAttribute('aria-pressed', 'false');
+    at = (i + list.length) % list.length;
+    slides[at].classList.add('is-on');
+    buttons[at].classList.add('is-on');
+    buttons[at].setAttribute('aria-pressed', 'true');
+  }
+  const run = autoplay($('#spotlight'), () => show(at + 1), 6500);
+}
+
+function ribbon(data, byId) {
+  const news = (data.ns || []).filter((n) => n.k === 'release' || n.k === 'update').slice(0, 4);
+  if (!news.length) return;
+  const link = $('#ribbon');
+  const text = $('#ribbon-text');
+  const tag = $('.ribbon-tag', link);
+  let at = -1;
+  const step = () => {
+    at = (at + 1) % news.length;
+    const n = news[at];
+    const p = byId.get(n.p);
+    link.classList.remove('turn');
+    void link.offsetWidth;
+    link.classList.add('turn');
+    tag.textContent = n.k === 'release' ? 'New' : 'Update';
+    text.textContent = n.t;
+    link.href = p?.su || `${STUDIO}/`;
+  };
+  step();
+  if (news.length > 1) autoplay(link, step, 4800);
 }
 
 fetch(`${STUDIO}/hub-catalog.json`, { cache: 'no-cache' })
