@@ -86,10 +86,12 @@ function sampleText(text, count, width) {
 
 export function createScene(canvas, { reduced = false } = {}) {
   const small = Math.min(window.innerWidth, window.innerHeight) < 700;
-  const COUNT = small ? 4500 : 9000;
+  const COUNT = small ? 3500 : 6500;
 
-  const renderer = new WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, small ? 1.5 : 2));
+  /* soft glows gain nothing from extra pixel density, and a background must
+     never wake a laptop's discrete GPU */
+  const renderer = new WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: 'low-power' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, small ? 1 : 1.25));
   renderer.setClearColor(0x08070c, 1);
 
   const scene = new Scene();
@@ -286,13 +288,20 @@ export function createScene(canvas, { reduced = false } = {}) {
   let spinNow = start.spin;
   let raf = 0;
 
-  function frame() {
+  let settledOn = null;
+  let lastFrame = 0;
+
+  function frame(now) {
+    /* high-refresh screens would otherwise do this work twice as often */
+    if (!reduced && now - lastFrame < 15) { raf = requestAnimationFrame(frame); return; }
+    lastFrame = now;
     const dt = Math.min(clock.getDelta(), 0.05);
     const t = clock.elapsedTime;
     const target = shapes[current];
     let moving = false;
 
     const base = reduced ? 1 : 1 - Math.pow(1 - 0.045, dt * 60);
+    if (settledOn !== target) {
     for (let i = 0; i < COUNT; i++) {
       const k = Math.min(1, base * speed[i]);
       const j = i * 3;
@@ -307,6 +316,8 @@ export function createScene(canvas, { reduced = false } = {}) {
     geo.attributes.position.needsUpdate = true;
     geo.attributes.color.needsUpdate = true;
     geo.attributes.size.needsUpdate = true;
+    if (!moving) settledOn = target;
+    }
 
     waveNow += (target.wave - waveNow) * (reduced ? 1 : Math.min(1, dt * 1.5));
     spinNow += (target.spin - spinNow) * Math.min(1, dt * 2);
