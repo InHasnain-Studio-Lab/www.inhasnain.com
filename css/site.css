@@ -653,3 +653,6 @@ section { padding: clamp(96px, 14vh, 160px) var(--gutter); }
   .ribbon, .banner::before, .banner-hex, .suite-banner::after, .hub-banner::after,
   .spot.is-on .spot-art, .spot.is-on .spot-copy > *, .ribbon.turn .ribbon-text, .ribbon.turn .ribbon-tag { animation: none; }
 }
+
+/* the studio campaigns, under the suite banners */
+.camp-eyebrow { margin-top: 44px; }
