@@ -511,6 +511,10 @@ section { padding: clamp(96px, 14vh, 160px) var(--gutter); }
   animation: hex-drift 30s linear infinite;
 }
 .banner-lede { max-width: 640px; margin: 18px 0 0; font-size: clamp(17px, 2vw, 20px); color: var(--ink-soft); }
+.xluna .banner::before { background: conic-gradient(from 0deg, #8fe6ff, #5cc8f0, #e2f8ff, #3a6f8f, #8fe6ff); }
+.xluna .banner::after { background: linear-gradient(135deg, rgba(6, 12, 20, 0.96), rgba(4, 7, 12, 0.92)); }
+.xluna-mark { display: block; width: 64px; height: 64px; margin-bottom: 14px; filter: drop-shadow(0 0 18px rgba(143, 230, 255, 0.45)); }
+.xluna .ice { color: #8fe6ff; }
 @keyframes banner-turn { to { transform: rotate(1turn); } }
 @keyframes hex-drift { to { background-position: 56px 97px; } }
 
