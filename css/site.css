@@ -95,14 +95,10 @@ main, .foot, .bar { position: relative; z-index: 2; }
 }
 .mark { display: flex; align-items: center; gap: 10px; text-decoration: none; margin-right: auto; }
 .mark-glyph {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  font: 800 16px var(--display);
-  color: var(--bg);
-  background: var(--grad);
+  display: block;
+  width: 66px;
+  height: 23px;
+  flex: none;
 }
 .mark-name { font: 500 15px var(--mono); letter-spacing: 0.02em; }
 .nav { display: flex; gap: 22px; }
